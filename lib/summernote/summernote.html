@@ -16,21 +16,28 @@
         placeholder: "&nbsp;",
         tabsize: 2,
         toolbar: [
-          ['style', ['style']],
+          //['style', ['style']],
           ['font', ['bold', 'underline', 'italic']],
-          ['color', ['color']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['insert', ['link', 'picture', 'hr', 'video']],
-          ['view', ['codeview']]
+          //['color', ['color']],
+          ['para', ['paragraph']],
+          //['insert', ['link', 'picture', 'hr', 'video']],
+          //['view', ['codeview']],
         ],
         disableGrammar: false,
-        spellCheck: false
+        spellCheck: false,
+      });
+
+      $("#summernote").on("summernote.enter", function(we, e) {
+         $(this).summernote("pasteHTML", "<br><br>");
+         e.preventDefault();
       });
     </script>
 <style>
       body {
           display: block;
           margin: 0px;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-size: 16px;
       }
       .note-editor.note-airframe, .note-editor.note-frame {
           border: 0px solid #a9a9a9;
