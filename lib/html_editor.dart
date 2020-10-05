@@ -30,13 +30,13 @@ class HtmlEditor extends StatefulWidget {
 
   HtmlEditor(
       {Key key,
-      this.value,
-      this.height = 380,
-      this.decoration,
-      this.useBottomSheet = true,
-      this.widthImage = "100%",
-      this.showBottomToolbar = true,
-      this.hint})
+        this.value,
+        this.height = 380,
+        this.decoration,
+        this.useBottomSheet = true,
+        this.widthImage = "100%",
+        this.showBottomToolbar = true,
+        this.hint})
       : super(key: key);
 
   @override
@@ -123,7 +123,7 @@ class HtmlEditorState extends State<HtmlEditor> {
               gestureNavigationEnabled: true,
               gestureRecognizers: [
                 Factory(
-                    () => VerticalDragGestureRecognizer()..onUpdate = (_) {}),
+                        () => VerticalDragGestureRecognizer()..onUpdate = (_) {}),
               ].toSet(),
               javascriptChannels: <JavascriptChannel>[
                 getTextJavascriptChannel(context)
@@ -145,48 +145,51 @@ class HtmlEditorState extends State<HtmlEditor> {
           widget.showBottomToolbar
               ? Divider()
               : Container(
-                  height: 1,
-                ),
+            height: 1,
+          ),
           widget.showBottomToolbar
               ? Padding(
-                  padding: const EdgeInsets.only(
-                      left: 4.0, right: 4, bottom: 8, top: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      widgetIcon(Icons.image, "Image", onKlik: () {
-                        widget.useBottomSheet
-                            ? bottomSheetPickImage(context)
-                            : dialogPickImage(context);
-                      }),
-                      widgetIcon(Icons.content_copy, "Copy", onKlik: () async {
-                        String data = await getText();
-                        Clipboard.setData(new ClipboardData(text: data));
-                      }),
-                      widgetIcon(Icons.content_paste, "Paste",
-                          onKlik: () async {
-                        ClipboardData data =
-                            await Clipboard.getData(Clipboard.kTextPlain);
+            padding: const EdgeInsets.only(
+                left: 4.0, right: 4, bottom: 8, top: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                widgetIcon(Icons.image, "Image", onKlik: () {
+                  widget.useBottomSheet
+                      ? bottomSheetPickImage(context)
+                      : dialogPickImage(context);
+                }),
+                widgetIcon(Icons.content_copy, "Copy", onKlik: () async {
+                  String data = await getText();
+                  Clipboard.setData(new ClipboardData(text: data));
+                }),
+                widgetIcon(Icons.content_paste, "Paste",
+                    onKlik: () async {
+                      ClipboardData data =
+                      await Clipboard.getData(Clipboard.kTextPlain);
 
-                        String txtIsi = data.text
-                            .replaceAll("'", '\\"')
-                            .replaceAll('"', '\\"')
-                            .replaceAll("[", "\\[")
-                            .replaceAll("]", "\\]")
-                            .replaceAll("\n", "<br/>")
-                            .replaceAll("\n\n", "<br/>")
-                            .replaceAll("\r", " ")
-                            .replaceAll('\r\n', " ");
-                        String txt =
-                            "\$('.note-editable').append( '" + txtIsi + "');";
+                      String txtIsi = data.text
+                          .replaceAll("'", '\\"')
+                          .replaceAll('"', '\\"')
+                          .replaceAll("[", "\\[")
+                          .replaceAll("]", "\\]")
+                          .replaceAll("\n", "<br/>")
+                          .replaceAll("\n\n", "<br/>")
+                          .replaceAll("\r", " ")
+                          .replaceAll('\r\n', " ");
+                      String txt =
+                          "\$('.note-editable').append( '" + txtIsi + "');";
+                      try{
                         _controller.evaluateJavascript(txt);
-                      }),
-                    ],
-                  ),
-                )
+                      }catch(ex){}
+
+                    }),
+              ],
+            ),
+          )
               : Container(
-                  height: 1,
-                )
+            height: 1,
+          )
         ],
       ),
     );
@@ -203,6 +206,7 @@ class HtmlEditorState extends State<HtmlEditor> {
               isi == "<p><br/></p>") {
             isi = "";
           }
+          print(text);
           setState(() {
             text = isi;
           });
@@ -210,8 +214,10 @@ class HtmlEditorState extends State<HtmlEditor> {
   }
 
   Future<String> getText() async {
-    await _controller.evaluateJavascript(
-        "GetTextSummernote.postMessage(document.getElementsByClassName('note-editable')[0].innerHTML);");
+    try{
+      await _controller.evaluateJavascript(
+          "GetTextSummernote.postMessage(document.getElementsByClassName('note-editable')[0].innerHTML);");
+    }catch(ex){}
     return text;
   }
 
@@ -229,25 +235,35 @@ class HtmlEditorState extends State<HtmlEditor> {
         "document.getElementsByClassName('note-editable')[0].innerHTML = '" +
             txtIsi +
             "';";
-    _controller.evaluateJavascript(txt);
+    try{
+      _controller.evaluateJavascript(txt);
+    }catch(ex){}
   }
 
   setFullContainer() {
-    _controller.evaluateJavascript(
-        '\$("#summernote").summernote("fullscreen.toggle");');
+    try{
+      _controller.evaluateJavascript(
+          '\$("#summernote").summernote("fullscreen.toggle");');
+    }catch(ex){}
   }
 
   setFocus() {
-    _controller.evaluateJavascript("\$('#summernote').summernote('focus');");
+    try{
+      _controller.evaluateJavascript("\$('#summernote').summernote('focus');");
+    }catch(ex){}
   }
 
   setEmpty() {
-    _controller.evaluateJavascript("\$('#summernote').summernote('reset');");
+    try{
+      _controller.evaluateJavascript("\$('#summernote').summernote('reset');");
+    }catch(ex){}
   }
 
   setHint(String text) {
     String hint = '\$(".note-placeholder").html("$text");';
-    _controller.evaluateJavascript(hint);
+    try{
+      _controller.evaluateJavascript(hint);
+    }catch(ex){}
   }
 
   Widget widgetIcon(IconData icon, String title, {OnClik onKlik}) {
@@ -303,7 +319,9 @@ class HtmlEditorState extends State<HtmlEditor> {
 
                     String txt =
                         "\$('.note-editable').append( '" + base64Image + "');";
-                    _controller.evaluateJavascript(txt);
+                    try{
+                      _controller.evaluateJavascript(txt);
+                    }catch(ex){}
                   }),
             ),
           );
@@ -321,19 +339,21 @@ class HtmlEditorState extends State<HtmlEditor> {
           return StatefulBuilder(builder: (BuildContext context, setStatex) {
             return SingleChildScrollView(
                 child: Container(
-              height: 140,
-              width: double.infinity,
-              child: PickImage(callbackFile: (file) async {
-                String filename = p.basename(file.path);
-                List<int> imageBytes = await file.readAsBytes();
-                String base64Image = "<img width=\"${widget.widthImage}\" "
-                    "src=\"data:image/png;base64, "
-                    "${base64Encode(imageBytes)}\" data-filename=\"$filename\">";
-                String txt =
-                    "\$('.note-editable').append( '" + base64Image + "');";
-                _controller.evaluateJavascript(txt);
-              }),
-            ));
+                  height: 140,
+                  width: double.infinity,
+                  child: PickImage(callbackFile: (file) async {
+                    String filename = p.basename(file.path);
+                    List<int> imageBytes = await file.readAsBytes();
+                    String base64Image = "<img width=\"${widget.widthImage}\" "
+                        "src=\"data:image/png;base64, "
+                        "${base64Encode(imageBytes)}\" data-filename=\"$filename\">";
+                    String txt =
+                        "\$('.note-editable').append( '" + base64Image + "');";
+                    try{
+                      _controller.evaluateJavascript(txt);
+                    }catch(ex){}
+                  }),
+                ));
           });
         });
   }
